@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIZAXEN - Étrend-kiegészítő</title>
+    <style>
+        /* Reset básico */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #FFF5F5;
+            color: #333333;
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 40px 15px;
+        }
+
+        /* Container Principal Responsivo */
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background-color: #FFFFFF;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+            padding: 40px 25px;
+            text-align: center;
+            border-top: 6px solid #F47B20;
+        }
+        
+        /* Título do Produto */
+        h1 {
+            font-size: 32px;
+            color: #2C3E50;
+            margin-bottom: 20px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            text-transform: uppercase;
+        }
+        
+        /* Espaço da Imagem */
+        .image-placeholder {
+            width: 100%;
+            max-width: 280px;
+            height: auto;
+            border-radius: 8px;
+            margin: 0 auto 25px auto;
+            display: block;
+        }
+
+        /* Descrição Neutra */
+        .description {
+            font-size: 16px;
+            color: #555555;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Caixa de Preço Adicionada */
+        .price-box {
+            text-align: center;
+            background-color: #FFF9F5;
+            border: 2px dashed #F47B20;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        
+        .price-old {
+            text-decoration: line-through;
+            color: #888888;
+            font-size: 15px;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .price-new {
+            color: #F47B20;
+            font-size: 28px;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            line-height: 1;
+        }
+        
+        .discount-badge {
+            background-color: #E74C3C;
+            color: #FFFFFF;
+            font-size: 14px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+        
+        /* Botão de Compra */
+        .cta-button {
+            display: block;
+            width: 100%;
+            background-color: #F47B20;
+            color: #FFFFFF;
+            text-align: center;
+            padding: 18px 10px;
+            font-size: 22px;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(244, 123, 32, 0.3);
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+        
+        .cta-button:hover {
+            background-color: #D96A18;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(244, 123, 32, 0.4);
+        }
+
+        .cod-badge {
+            text-align: center;
+            font-size: 15px;
+            font-weight: 600;
+            color: #D96A18;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        /* Rodapé e Links */
+        .footer {
+            padding-top: 20px;
+            border-top: 1px solid #F1F1F1;
+            font-size: 11px;
+            color: #888888;
+            text-align: center;
+            line-height: 1.5;
+        }
+        
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .footer-links a {
+            color: #666666;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        
+        .footer-links a:hover {
+            color: #F47B20;
+            text-decoration: underline;
+        }
+        
+        .footer-separator {
+            color: #CCCCCC;
+        }
+
+        /* Estilos dos Modais (Caixinhas Brancas) */
+        .modal-overlay {
+            display: none; 
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); 
+            backdrop-filter: blur(3px);
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            opacity: 0;
+            animation: fadeIn 0.3s forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: #FFFFFF;
+            padding: 30px 25px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 450px;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: left;
+            transform: translateY(20px);
+            animation: slideUp 0.3s forwards;
+        }
+
+        @keyframes slideUp {
+            to { transform: translateY(0); }
+        }
+
+        .modal-content h3 {
+            color: #2C3E50;
+            margin-bottom: 15px;
+            font-size: 20px;
+            padding-right: 30px;
+            border-bottom: 2px solid #FFF5F5;
+            padding-bottom: 10px;
+        }
+        
+        .modal-content p {
+            font-size: 14px;
+            color: #555555;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .contact-email {
+            display: inline-block;
+            background-color: #FFF5F5;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            color: #F47B20;
+            text-decoration: none;
+            margin-bottom: 15px;
+            border: 1px solid #FFE4E4;
+            transition: all 0.2s ease;
+        }
+
+        .contact-email:hover {
+            text-decoration: underline;
+            background-color: #FFE4E4;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #AAAAAA;
+            cursor: pointer;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+        
+        .close-btn:hover {
+            color: #E74C3C;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- Nome do Produto -->
+        <h1>DIZAXEN</h1>
+
+        <!-- Imagem do Produto (Substitua o src pelo link da imagem) -->
+        <img src="prod.dizaxen.png" alt="Dizaxen" class="image-placeholder">
+
+        <!-- Descrição Neutra (Húngaro) -->
+        <div class="description">
+            <p>A DIZAXEN egy kiváló minőségű étrend-kiegészítő kapszula. Úgy lett kifejlesztve, hogy könnyen beilleszthető legyen a napi rutinba. Foglalja le a sajátját még ma egyszerűen és biztonságosan. Élvezze a kényelmet, hogy csak a csomag átvételekor kell fizetnie.</p>
+        </div>
+
+        <!-- Caixa de Preço Adicionada -->
+        <div class="price-box">
+            <span class="price-old">Eredeti ár: 19800 Ft</span>
+            <span class="price-new">9900 Ft <span class="discount-badge">-50%</span></span>
+        </div>
+
+        <!-- Botão de Compra com o seu link -->
+        <a href="https://925dh.doctorazlab.com/l" class="cta-button">
+            Foglalja le most
+        </a>
+        
+        <!-- Etiqueta de Cash on Delivery (Húngaro) -->
+        <div class="cod-badge">
+            📦 Fizetés utánvéttel (Kizárólag átvételkor)
+        </div>
+
+        <!-- Rodapé Neutro com Links -->
+        <div class="footer">
+            <p style="margin-bottom: 15px; font-style: italic;">
+                * Ez a termék egy étrend-kiegészítő, és nem alkalmas betegségek diagnosztizálására, kezelésére, gyógyítására vagy megelőzésére.
+            </p>
+            
+            <div class="footer-links">
+                <a onclick="openModal('modal-disclaimer')">Jogi nyilatkozat</a>
+                <span class="footer-separator">|</span>
+                <a onclick="openModal('modal-privacy')">Adatvédelem</a>
+                <span class="footer-separator">|</span>
+                <a onclick="openModal('modal-terms')">Feltételek</a>
+                <span class="footer-separator">|</span>
+                <a onclick="openModal('modal-contact')">Kapcsolat</a>
+            </div>
+            
+            <p>&copy; 2026 DIZAXEN Magyarország. Minden jog fenntartva.</p>
+        </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODAIS (TEXTOS EM HÚNGARO)                 -->
+    <!-- ========================================== -->
+    
+    <!-- Modal Aviso Legal -->
+    <div id="modal-disclaimer" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('modal-disclaimer')">&times;</span>
+            <h3>Jogi nyilatkozat</h3>
+            <p>Az ezen az oldalon található információk kizárólag tájékoztató jellegűek, és nem helyettesítik az orvosi vagy egészségügyi szakember tanácsát.</p>
+            <p>Ne használja az oldalon található információkat egészségügyi problémák diagnosztizálására vagy kezelésére. Mindig konzultáljon egészségügyi szakemberrel, mielőtt bármilyen étrend-kiegészítő programot elkezdene.</p>
+        </div>
+    </div>
+
+    <!-- Modal Privacidade -->
+    <div id="modal-privacy" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('modal-privacy')">&times;</span>
+            <h3>Adatvédelmi irányelvek</h3>
+            <p>Az Ön magánélete fontos számunkra. Ezen a közvetítő oldalon nem gyűjtünk személyes adatokat. Ha továbblép a hivatalos termékoldalra, kérjük, olvassa el az ott található adatvédelmi irányelveket az adatgyűjtésre vonatkozóan.</p>
+            <p>Nem adunk el, nem adunk bérbe, és nem osztunk meg semmilyen böngészési adatot harmadik féllel.</p>
+        </div>
+    </div>
+
+    <!-- Modal Termos -->
+    <div id="modal-terms" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('modal-terms')">&times;</span>
+            <h3>Felhasználási feltételek</h3>
+            <p>A weboldal használatával Ön elfogadja ezeket a szolgáltatási feltételeket. Ez a weboldal kizárólag információs hídként szolgál a hivatalos termékoldalhoz.</p>
+            <p>Nem vállalunk felelősséget a termék kiszállításáért vagy a visszatérítésekért, mivel minden tranzakció a hivatalos gyártó biztonságos weboldalán történik Utánvéttel (készpénzes fizetés szállításkor).</p>
+        </div>
+    </div>
+
+    <!-- Modal Contato -->
+    <div id="modal-contact" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('modal-contact')">&times;</span>
+            <h3>Kapcsolat</h3>
+            <p>Ha kérdése van a rendelésével vagy a szállítás állapotával kapcsolatban, kérjük, forduljon közvetlenül a hivatalos termék gyártójához a hivatalos pénztár oldalon található linkeken keresztül.</p>
+            <p>Ha ezzel a konkrét tájékoztató oldallal kapcsolatban van kérdése, felveheti velünk a kapcsolatot az alábbi e-mail címen:</p>
+            
+            <!-- E-mail Adicionado Aqui -->
+            <a href="mailto:suportegeralnutra@gmail.com" class="contact-email">suportegeralnutra@gmail.com</a>
+        </div>
+    </div>
+
+    <!-- Script para funcionamento dos Modais -->
+    <script>
+        function openModal(id) {
+            document.getElementById(id).style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Impede o fundo de rolar
+        }
+        
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+            document.body.style.overflow = 'auto'; // Restaura a rolagem
+        }
+        
+        // Fecha a caixinha ao clicar na área escura fora dela
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                event.target.style.display = "none";
+                document.body.style.overflow = 'auto';
+            }
+        }
+    </script>
+
+</body>
+</html>
